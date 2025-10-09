@@ -246,6 +246,11 @@ gs_swap_chain::gs_swap_chain(gs_device *device, const gs_init_data *data)
 
 	if (flags & DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT) {
 		ComPtr<IDXGISwapChain2> swap2 = ComQIPtr<IDXGISwapChain2>(swap);
+
+		// Set max frame latency to 2 as per the Microsoft documentation on DXGI
+		// https://learn.microsoft.com/en-us/windows/uwp/gaming/reduce-latency-with-dxgi-1-3-swap-chains#step-2-set-the-frame-latency
+		swap2->SetMaximumFrameLatency(2);
+
 		hWaitable = swap2->GetFrameLatencyWaitableObject();
 		if (hWaitable == NULL) {
 			throw HRError("Failed to GetFrameLatencyWaitableObject", hr);
